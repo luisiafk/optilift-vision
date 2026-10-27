@@ -14,6 +14,7 @@ class LiftTracker:
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5
         )
+
     def procces_video(self) -> List[FramePose]:
         """
         Reads the video frame by frame, exctract clever atomic points
@@ -35,13 +36,13 @@ class LiftTracker:
 
             timestamp = frame_idx / fps
             image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = self.pose.procces(image_rgb)
+            results = self.pose.process(image_rgb)
 
             if results.pose_landmarks:
-                landmarks = results.pose_landmarks
+                landmarks = results.pose_landmarks.landmark
                 h, w, _ = frame.shape
 
-                #C
+                #JOINTS
                 hip = Keypoint2d(
                     landmarks[self.mp_pose.PoseLandmark.LEFT_HIP.value].x * w,
                     landmarks[self.mp_pose.PoseLandmark.LEFT_HIP.value].y * h,
@@ -62,7 +63,6 @@ class LiftTracker:
                     landmarks[self.mp_pose.PoseLandmark.LEFT_SHOULDER.value].y * h,
                 )
 
-                #Use the middle point beetween the wrists to aproximate the barbell
                 wrist_l = landmarks[self.mp_pose.PoseLandmark.LEFT_WRIST.value]
                 wrist_r = landmarks[self.mp_pose.PoseLandmark.RIGHT_WRIST.value]
                 barbell = Keypoint2d(

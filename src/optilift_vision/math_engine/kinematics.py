@@ -1,5 +1,6 @@
 import numpy as np
-from scipy.interpolate import UnivariateSpiline
+from scipy.signal import savgol_filter
+from scipy.interpolate import UnivariateSpline
 from typing import List, Tuple
 from .types import Keypoint2d, KinematicState
 
@@ -16,11 +17,22 @@ def procces_barbell_kinematics(
     x = np.array([p.x for p in positions])
     y = np.array([p.y for p in positions])
 
+    #SCALE
+    meters_per_pixel = 0.002  # Example scale factor, adjust as needed
+    x *= meters_per_pixel
+    y *= meters_per_pixel
+
+    window_len = min(15, len(t) if len(t) % 2 == 1 else len(t) - 1)
+    if window_len < 5:
+        window_len = 5
+
+    x_smooth = savgol_filter(x, window_length=window_len, polyorder=3)
+    y_smooth = savgol_filter(y, window_length=window_len, polyorder=3)
 
     #Adjust the smooths cubics Splines
     #Exact interpolation s = 0: smooth s > 0 against the noise
-    spline_x = UnivariateSpiline(t, x, k=3, s=smoothing_factor)
-    spline_y = UnivariateSpiline(t, y, k=3, s=smoothing_factor)
+    spline_x = UnivariateSpline(t, x_smooth, k=3, s=1000.0)
+    spline_y = UnivariateSpline(t, y_smooth, k=3, s=1000.0)
 
     #Exact splines numerics derivates
     dspline_x = spline_x.derivative(1)

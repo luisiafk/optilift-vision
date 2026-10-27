@@ -6,8 +6,15 @@ readme = "README.md"
 authors = [
     { name = "luisiafk", email = "luise.cohalla@gmail.com" }
 ]
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.10"
+dependencies = [
+    "mediapipe==0.10.14",
+    "numpy>=1.22.0",
+    "opencv-python-headless>=4.8.0",
+    "protobuf<5",
+    "rich>=13.0.0",
+    "scipy>=1.9.0",
+]
 
 [project.scripts]
 optilift-vision = "optilift_vision:main"

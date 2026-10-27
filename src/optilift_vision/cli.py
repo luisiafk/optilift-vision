@@ -16,7 +16,7 @@ def main():
 
     args = parser.parse_args()
 
-    console.print(Panel.fit("[bold cyan]OptiLift-Vision[/bold cyan] - Biomecanic Numeric Analysis", border_style="cyan"))
+    console.print(Panel.fit("[bold cyan]OptiLift-Vision[/bold cyan] - Numerical biomechanics engine", border_style="cyan"))
 
     with console.status("[bold green]Extracting the joints and barbell trajectory"):
         tracker = LiftTracker(args.video)
@@ -26,7 +26,7 @@ def main():
         console.print("[bold red][ERROR][/bold red]Cannot extract the poses on the vide. Make sure that the lifter is on his side and completely visible")
         return
 
-    console.print(f"[green][/green] Complete the extraction: {len(poses)} proccesed frames")
+    console.print(f"[green][/green] Complete the extraction: {len(poses)} proccesed frames")
 
 
     with console.status("[bold green] Applying cubic splines and calculate the deritative (v, a) ..."):
@@ -34,7 +34,7 @@ def main():
         barbell_positions = [p.barbell for p in poses]
         states = procces_barbell_kinematics(timestamps, barbell_positions)
 
-    console.print("[green][green]Completed cinematic")
+    console.print("[green][green]Completed cinematic")
 
     with console.status("[bold green] Searching for the sticking point"):
         sp_result = find_sticky_point(states)
