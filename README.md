@@ -14,7 +14,7 @@ The system uses computer vision solely as a discrete spatio-temporal coordinate 
 
 ## Architecture & Numerical Pipeline
 
-1. **Extraction (Vision Tracker):** Frame-by-frame video processing via `MediaPipe` to isolate $(x,y)$ coordinates of main joints and the barbell (using wrists as a proxy).
+1. **Extraction (Vision Tracker):** Frame-by-frame video processing via `MediaPipe` to isolate $(x,y)$ coordinates of main joints and the barbell, which is detected directly from the video frames via edge tracking (Canny) and line detection (Hough); if no barbell is found the tracker falls back to the wrists midpoint as proxy.
 2. **Conditioning & Smoothing (Math Engine):** Application of Smoothed Cubic Splines with curvature penalization ($E(S)$) to eliminate pixel quantization noise without losing the true dynamic of the movement.
 3. **Analytical Differentiation:** Exact calculation of the first and second-order derivatives over the splines to obtain instantaneous velocity $v(t)$ and acceleration $a(t)$.
 4. **Performance Metrics:** Automatic detection of the *Sticking Point* by identifying the local minimun of vertical acceleration during the concentric phase.

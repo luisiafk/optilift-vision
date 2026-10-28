@@ -1,0 +1,7 @@
+flowchart TD
+    Start[Inicio CLI] --> Pose[Tracker: MediaPose Pose]
+    Pose --> Bar[BarTracker: deteccion de barra]
+    Bar --> Frames[FramePose]
+    Frames --> Kin[Math: Kinematics + Metrics]
+    Kin --> Render[Render: VideoOverlay]
+    Render --> Out[Video output]

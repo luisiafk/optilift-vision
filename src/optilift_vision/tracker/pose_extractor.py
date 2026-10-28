@@ -2,11 +2,13 @@ import cv2
 import mediapipe as mp
 from typing import List
 from ..math_engine.types import Keypoint2d, FramePose
+from .bar_tracker import BarTracker
 
 class LiftTracker:
     def __init__(self, video_path: str):
         self.video_path = video_path
         self.mp_pose = mp.solutions.pose
+        self.bar_tracker = BarTracker()
         self.pose = self.mp_pose.Pose(
             static_image_mode=False,
             model_complexity=2,
@@ -65,10 +67,17 @@ class LiftTracker:
 
                 wrist_l = landmarks[self.mp_pose.PoseLandmark.LEFT_WRIST.value]
                 wrist_r = landmarks[self.mp_pose.PoseLandmark.RIGHT_WRIST.value]
-                barbell = Keypoint2d(
-                    (wrist_l.x + wrist_r.x) / 2 * w,
-                    (wrist_l.y + wrist_r.y) / 2 * h,
-                )
+
+                # Se intenta detectar la barra real del barbell con el BarTracker;
+                # si no se detecta se recurre al proxy con la media de las muñecas.
+                barbell = self.bar_tracker.detect_barbell(frame)
+                plates = self.bar_tracker.detect_plates(frame) or []
+
+                if barbell is None:
+                    barbell = Keypoint2d(
+                        (wrist_l.x + wrist_r.x) / 2 * w,
+                        (wrist_l.y + wrist_r.y) / 2 * h,
+                    )
 
                 frame_poses.append(
                     FramePose(
@@ -78,7 +87,8 @@ class LiftTracker:
                         hip=hip,
                         knee=knee,
                         ankle=ankle,
-                        shoulder=shoulder
+                        shoulder=shoulder,
+                        plates=plates,
                     )
                 )
             frame_idx += 1

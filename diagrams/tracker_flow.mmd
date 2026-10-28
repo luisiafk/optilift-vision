@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant L as LiftTracker
+    participant B as BarTracker
+    participant M as MediaPipe Pose
+    L->>M: procesar frame
+    M-->>L: landmarks (joints + wrists)
+    L->>B: detect_barbell(frame)
+    alt barra detectada
+        B-->>L: posicion del barbell (x, y)
+        L->>L: FramePose.barbell = posicion real
+    else no detectada
+        L->>L: fallback proxy de manopla
+    end

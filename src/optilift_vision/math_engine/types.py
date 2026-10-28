@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 
 @dataclass
@@ -15,6 +15,7 @@ class FramePose:
     knee: Keypoint2d
     ankle: Keypoint2d
     shoulder: Keypoint2d
+    plates: List[Keypoint2d] = field(default_factory=list)
 
 @dataclass
 class KinematicState:
@@ -27,3 +28,11 @@ class KinematicState:
     acc_y: float
     v_mag: float
     a_mag: float
+
+@dataclass
+class DynamicState:
+    timestamp: float
+    energy: float
+    power: float
+    force: float
+    impulse: float

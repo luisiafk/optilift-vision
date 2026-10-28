@@ -47,6 +47,19 @@ class VideoRenderer:
                 curr_bar = (int(poses[frame_idx].barbell.x), int(poses[frame_idx].barbell.y))
                 cv2.circle(frame, curr_bar, 6, (0, 0, 255), -1)
 
+                #Puntos de articulacion (articular points) detectadas en el frame actual
+                for pt in (
+                    poses[frame_idx].hip,
+                    poses[frame_idx].knee,
+                    poses[frame_idx].ankle,
+                    poses[frame_idx].shoulder,
+                ):
+                    cv2.circle(frame, (int(pt.x), int(pt.y)), 5, (255, 255, 0), -1)
+
+                #Discos (placas) detectados en el frame actual
+                for plate in poses[frame_idx].plates or []:
+                    cv2.circle(frame, (int(plate.x), int(plate.y)), 7, (0, 255, 255), -1)
+
             if frame_idx < len(states):
                 st = states[frame_idx]
                 text_vel = f"Vel Y: {st.vel_y:.2f} m/s"
